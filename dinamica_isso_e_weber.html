@@ -1,0 +1,37 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Isso é Weber?</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f7fb;padding:25px;color:#172033}
+.box{max-width:800px;margin:auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 8px 25px #0002}
+h1{text-align:center}.sub{text-align:center;color:#667085}.q{font-size:21px;font-weight:700;margin:28px 0 18px}
+.answers{display:grid;gap:12px}button{padding:15px;border:2px solid #d0d5dd;border-radius:12px;background:#fff;font-size:16px;cursor:pointer;text-align:left}
+.correct{background:#dff7e8!important;border-color:#22a06b!important}.wrong{background:#ffe4e4!important;border-color:#d64545!important}
+#next,#restart{margin-top:20px;background:#172033;color:white;text-align:center}#feedback{margin-top:18px;font-weight:bold;min-height:24px}
+.hidden{display:none}
+</style></head><body><div class="box">
+<h1>🧠 ISSO É WEBER?</h1><p class="sub">Dinâmica de fixação — Weber e Educação</p>
+<div id="score">Pontuação: 0</div><div id="game"></div><div id="feedback"></div>
+<button id="next" class="hidden">Próxima situação →</button>
+<button id="restart" class="hidden">Jogar novamente</button>
+</div>
+<script>
+const qs=[
+["Um estudante participa de uma atividade porque quer compreender o conteúdo e melhorar sua nota.","Ação social",["Ação social","Burocracia","Tipo ideal","Não se encaixa"]],
+["Professor e estudantes realizam uma atividade em conjunto, orientando suas ações uns pelos outros.","Relação social",["Relação social","Racionalização","Tipo ideal","Não se encaixa"]],
+["Para realizar a matrícula, o estudante precisa entregar documentos, cumprir prazos e seguir procedimentos definidos pela instituição.","Burocracia",["Ação social","Burocracia","Relação social","Tipo ideal"]],
+["A escola organiza horários, calendário, avaliações, frequência, registros e procedimentos para tornar seu funcionamento previsível.","Racionalização",["Racionalização","Ação social","Relação social","Não se encaixa"]],
+["Um pesquisador cria um modelo teórico de uma escola totalmente organizada segundo regras burocráticas e usa esse modelo para comparar instituições reais.","Tipo ideal",["Tipo ideal","Burocracia","Ação social","Relação social"]],
+["Durante a aula, um estudante espirra involuntariamente, sem significado social orientado pela ação de outras pessoas.","Não se encaixa",["Ação social","Relação social","Burocracia","Não se encaixa"]]
+];
+let i=0,score=0,done=false;
+const game=document.getElementById("game"),fb=document.getElementById("feedback"),next=document.getElementById("next"),restart=document.getElementById("restart"),sc=document.getElementById("score");
+function show(){done=false;fb.textContent="";next.classList.add("hidden");restart.classList.add("hidden");
+let [q,c,o]=qs[i];game.innerHTML='<div class="q">'+(i+1)+". "+q+'</div><div class="answers">'+o.map(x=>'<button>'+x+'</button>').join("")+'</div>';
+game.querySelectorAll("button").forEach(b=>b.onclick=()=>answer(b,c));}
+function answer(b,c){if(done)return;done=true;game.querySelectorAll("button").forEach(x=>x.disabled=true);
+if(b.textContent===c){score++;b.classList.add("correct");fb.textContent="✅ Acertou! "+c+"."}
+else{b.classList.add("wrong");fb.textContent="❌ A resposta esperada é: "+c+".";[...game.querySelectorAll("button")].find(x=>x.textContent===c).classList.add("correct")}
+sc.textContent="Pontuação: "+score+" / "+qs.length;if(i<qs.length-1)next.classList.remove("hidden");else{fb.textContent+=" 🎉 Fim da dinâmica!";restart.classList.remove("hidden")}}
+next.onclick=()=>{i++;show()};restart.onclick=()=>{i=0;score=0;sc.textContent="Pontuação: 0";show()};show();
+</script></div></body></html>
