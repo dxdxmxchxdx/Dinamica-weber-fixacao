@@ -1,37 +1,755 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Isso é Weber?</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Max Weber — Uma experiência interativa</title>
+
 <style>
-body{font-family:Arial,sans-serif;background:#f4f7fb;padding:25px;color:#172033}
-.box{max-width:800px;margin:auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 8px 25px #0002}
-h1{text-align:center}.sub{text-align:center;color:#667085}.q{font-size:21px;font-weight:700;margin:28px 0 18px}
-.answers{display:grid;gap:12px}button{padding:15px;border:2px solid #d0d5dd;border-radius:12px;background:#fff;font-size:16px;cursor:pointer;text-align:left}
-.correct{background:#dff7e8!important;border-color:#22a06b!important}.wrong{background:#ffe4e4!important;border-color:#d64545!important}
-#next,#restart{margin-top:20px;background:#172033;color:white;text-align:center}#feedback{margin-top:18px;font-weight:bold;min-height:24px}
-.hidden{display:none}
-</style></head><body><div class="box">
-<h1>🧠 ISSO É WEBER?</h1><p class="sub">Dinâmica de fixação — Weber e Educação</p>
-<div id="score">Pontuação: 0</div><div id="game"></div><div id="feedback"></div>
-<button id="next" class="hidden">Próxima situação →</button>
-<button id="restart" class="hidden">Jogar novamente</button>
-</div>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080b10;
+    color: #f5f7fa;
+    line-height: 1.6;
+}
+
+section {
+    min-height: 100vh;
+    padding: 90px 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h1, h2, h3 {
+    line-height: 1.1;
+}
+
+button, a {
+    cursor: pointer;
+}
+
+/* MENU */
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8,11,16,.9);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.logo {
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 13px;
+}
+
+nav a:hover {
+    color: #00c8e8;
+}
+
+/* HERO */
+
+.hero {
+    background:
+        radial-gradient(circle at 80% 20%, rgba(0,200,232,.18), transparent 30%),
+        radial-gradient(circle at 20% 80%, rgba(0,200,232,.08), transparent 30%);
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: clamp(55px, 12vw, 150px);
+    letter-spacing: -5px;
+}
+
+.hero .subtitle {
+    max-width: 700px;
+    margin: 25px auto;
+    font-size: 20px;
+    color: #b8c0ca;
+}
+
+.eyebrow {
+    color: #00c8e8;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.cta {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 25px;
+    border-radius: 30px;
+    background: #00c8e8;
+    color: #061014;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    transition: .25s;
+}
+
+.cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,200,232,.25);
+}
+
+/* GERAL */
+
+.section-title {
+    font-size: clamp(38px, 6vw, 75px);
+    margin-bottom: 15px;
+}
+
+.intro {
+    max-width: 750px;
+    color: #b8c0ca;
+    margin-bottom: 50px;
+}
+
+/* TIMELINE */
+
+.timeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 40px 10px 50px;
+}
+
+.event {
+    min-width: 230px;
+    position: relative;
+    padding: 25px;
+    border-top: 2px solid #00c8e8;
+}
+
+.event::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 20px;
+    width: 15px;
+    height: 15px;
+    background: #00c8e8;
+    border-radius: 50%;
+}
+
+.year {
+    font-size: 32px;
+    font-weight: 800;
+    color: #00c8e8;
+}
+
+.event h3 {
+    margin: 10px 0;
+}
+
+.event p {
+    color: #aeb7c2;
+    font-size: 14px;
+}
+
+/* CARDS */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: #10151d;
+    border: 1px solid #202936;
+    border-radius: 18px;
+    padding: 28px;
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: #00c8e8;
+}
+
+.card-number {
+    color: #00c8e8;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.card h3 {
+    margin: 12px 0;
+    font-size: 24px;
+}
+
+.card p {
+    color: #aeb7c2;
+    font-size: 15px;
+}
+
+/* BIO */
+
+.bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.big-number {
+    font-size: clamp(70px, 12vw, 150px);
+    font-weight: 900;
+    color: #151c25;
+    -webkit-text-stroke: 1px #00c8e8;
+}
+
+.bio-info {
+    display: grid;
+    gap: 15px;
+}
+
+.info {
+    padding: 20px;
+    border-left: 3px solid #00c8e8;
+    background: #10151d;
+}
+
+.info strong {
+    display: block;
+    color: #00c8e8;
+}
+
+/* CONCEITOS */
+
+.concept {
+    cursor: pointer;
+}
+
+.concept-details {
+    display: none;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #29323d;
+}
+
+.concept.active .concept-details {
+    display: block;
+}
+
+/* EDUCAÇÃO */
+
+.school {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-top: 40px;
+}
+
+.school-card {
+    background: #10151d;
+    padding: 25px 18px;
+    border-radius: 18px;
+    text-align: center;
+    border: 1px solid #202936;
+    transition: .3s;
+}
+
+.school-card:hover {
+    border-color: #00c8e8;
+    transform: translateY(-5px);
+}
+
+.icon {
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+/* FINAL */
+
+.final {
+    text-align: center;
+    background:
+        radial-gradient(circle at center, rgba(0,200,232,.12), transparent 45%);
+}
+
+.final h2 {
+    font-size: clamp(45px, 8vw, 100px);
+}
+
+.final p {
+    max-width: 650px;
+    margin: 20px auto;
+    color: #b8c0ca;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 30px;
+    text-align: center;
+    color: #697481;
+    border-top: 1px solid #202936;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 800px) {
+
+    nav .links {
+        display: none;
+    }
+
+    section {
+        padding: 80px 6%;
+    }
+
+    .bio-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .school {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline {
+        padding-left: 5px;
+    }
+
+    .event {
+        min-width: 200px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">WEBER.</div>
+
+    <div class="links">
+        <a href="#contexto">CONTEXTO</a>
+        <a href="#weber">WEBER</a>
+        <a href="#conceitos">CONCEITOS</a>
+        <a href="#educacao">EDUCAÇÃO</a>
+        <a href="#desafio">DESAFIO</a>
+    </div>
+</nav>
+
+
+<!-- ABERTURA -->
+
+<section class="hero">
+
+    <div class="eyebrow">Uma experiência interativa</div>
+
+    <h1>MAX WEBER</h1>
+
+    <p class="subtitle">
+        Indivíduo, sociedade e modernidade:
+        uma viagem pelo pensamento de um dos clássicos da Sociologia.
+    </p>
+
+    <a class="cta" href="#contexto">
+        COMEÇAR A EXPLORAÇÃO →
+    </a>
+
+</section>
+
+
+<!-- CONTEXTO HISTÓRICO -->
+
+<section id="contexto">
+
+    <div class="eyebrow">00 — Antes de Weber</div>
+
+    <h2 class="section-title">
+        Uma Alemanha<br>em transformação.
+    </h2>
+
+    <p class="intro">
+        Para compreender Weber, precisamos primeiro compreender
+        o contexto histórico em que suas ideias surgiram.
+    </p>
+
+    <div class="timeline">
+
+        <div class="event">
+            <div class="year">1789</div>
+            <h3>Revolução Francesa</h3>
+            <p>
+                Transformações políticas e sociais que influenciaram
+                profundamente a Europa.
+            </p>
+        </div>
+
+        <div class="event">
+            <div class="year">1806</div>
+            <h3>Fim do Sacro Império</h3>
+            <p>
+                Encerramento de uma estrutura política que existia
+                havia séculos.
+            </p>
+        </div>
+
+        <div class="event">
+            <div class="year">1815</div>
+            <h3>Congresso de Viena</h3>
+            <p>
+                Reorganização política da Europa e formação
+                da Confederação Germânica.
+            </p>
+        </div>
+
+        <div class="event">
+            <div class="year">1848–49</div>
+            <h3>Revoluções</h3>
+            <p>
+                Movimentos liberais e nacionalistas atravessam
+                diversos territórios europeus.
+            </p>
+        </div>
+
+        <div class="event">
+            <div class="year">1871</div>
+            <h3>Unificação alemã</h3>
+            <p>
+                Formação do Império Alemão e consolidação
+                da Alemanha como Estado nacional.
+            </p>
+        </div>
+
+    </div>
+
+    <a class="cta" href="#weber">E NO MEIO DISSO... WEBER →</a>
+
+</section>
+
+
+<!-- WEBER -->
+
+<section id="weber">
+
+    <div class="eyebrow">01 — Quem foi Weber?</div>
+
+    <div class="bio-grid">
+
+        <div>
+            <div class="big-number">1864</div>
+            <h2 class="section-title">Max Weber</h2>
+
+            <p class="intro">
+                Sociólogo, economista, historiador e um dos principais
+                pensadores da Sociologia clássica.
+            </p>
+        </div>
+
+        <div class="bio-info">
+
+            <div class="info">
+                <strong>📍 NASCIMENTO</strong>
+                Erfurt, Alemanha
+            </div>
+
+            <div class="info">
+                <strong>📚 ÁREAS DE ESTUDO</strong>
+                Sociologia, economia, política, religião e história.
+            </div>
+
+            <div class="info">
+                <strong>💡 UMA QUESTÃO CENTRAL</strong>
+                Compreender o sentido das ações humanas e sua relação
+                com a sociedade.
+            </div>
+
+            <div class="info">
+                <strong>🕰️ 1864 — 1920</strong>
+                Viveu em um período marcado por profundas
+                transformações sociais e políticas.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CURIOSIDADES -->
+
+<section>
+
+    <div class="eyebrow">01.1 — Para além da biografia</div>
+
+    <h2 class="section-title">Curiosidades</h2>
+
+    <p class="intro">
+        Weber foi um pensador multidisciplinar. Sua obra atravessa
+        diferentes áreas para compreender a sociedade moderna.
+    </p>
+
+    <div class="cards">
+
+        <div class="card">
+            <span class="card-number">01</span>
+            <h3>Direito</h3>
+            <p>
+                Sua formação acadêmica esteve fortemente ligada ao Direito
+                e à economia política.
+            </p>
+        </div>
+
+        <div class="card">
+            <span class="card-number">02</span>
+            <h3>Religião</h3>
+            <p>
+                Investigou como ideias e valores religiosos poderiam
+                relacionar-se às transformações econômicas.
+            </p>
+        </div>
+
+        <div class="card">
+            <span class="card-number">03</span>
+            <h3>Burocracia</h3>
+            <p>
+                Analisou a organização racional das instituições,
+                algo que continua presente na vida contemporânea.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CONCEITOS -->
+
+<section id="conceitos">
+
+    <div class="eyebrow">02 — Como Weber entendia a sociedade?</div>
+
+    <h2 class="section-title">Os conceitos</h2>
+
+    <p class="intro">
+        Clique nos conceitos para revelar uma explicação.
+        A apresentação continua sendo de vocês — o site apenas
+        acompanha a narrativa.
+    </p>
+
+    <div class="cards">
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">01</span>
+            <h3>Ação Social</h3>
+            <p>Conduta humana dotada de sentido.</p>
+
+            <div class="concept-details">
+                <strong>Exemplo:</strong>
+                um estudante estuda porque deseja alcançar determinado
+                objetivo. O sentido atribuído à ação importa.
+            </div>
+        </div>
+
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">02</span>
+            <h3>Relação Social</h3>
+            <p>Ações orientadas por um sentido compartilhado.</p>
+
+            <div class="concept-details">
+                <strong>Exemplo:</strong>
+                professor e aluno orientam suas ações considerando
+                a existência e as expectativas do outro.
+            </div>
+        </div>
+
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">03</span>
+            <h3>Método Compreensivo</h3>
+            <p>Busca compreender o sentido das ações e processos históricos.</p>
+
+            <div class="concept-details">
+                <strong>Pergunta central:</strong>
+                não apenas "o que aconteceu?", mas também
+                "qual sentido essa ação possui para quem a realiza?"
+            </div>
+        </div>
+
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">04</span>
+            <h3>Indivíduo</h3>
+            <p>Ponto de partida para compreender os fenômenos sociais.</p>
+
+            <div class="concept-details">
+                <strong>Ideia-chave:</strong>
+                compreender as ações dos indivíduos ajuda a compreender
+                processos sociais mais amplos.
+            </div>
+        </div>
+
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">05</span>
+            <h3>Tipo Ideal</h3>
+            <p>Modelo abstrato construído para analisar e comparar a realidade.</p>
+
+            <div class="concept-details">
+                <strong>Importante:</strong>
+                o tipo ideal não é uma pessoa ou situação que precisa
+                existir exatamente daquela maneira.
+            </div>
+        </div>
+
+
+        <div class="card concept" onclick="toggleConcept(this)">
+            <span class="card-number">06</span>
+            <h3>Religião e Capitalismo</h3>
+            <p>
+                Relação entre valores religiosos, motivações individuais
+                e transformações econômicas.
+            </p>
+
+            <div class="concept-details">
+                <strong>Questão:</strong>
+                Weber investigou relações entre determinadas ideias
+                religiosas e o desenvolvimento de formas de conduta
+                econômica.
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- EDUCAÇÃO -->
+
+<section id="educacao">
+
+    <div class="eyebrow">03 — Weber e Educação</div>
+
+    <h2 class="section-title">
+        Onde Weber<br>aparece na escola?
+    </h2>
+
+    <p class="intro">
+        Agora vamos trazer os conceitos para uma realidade
+        que interessa diretamente a nós: a educação.
+    </p>
+
+    <div class="school">
+
+        <div class="school-card">
+            <div class="icon">🎓</div>
+            <h3>Ação social</h3>
+            <p>
+                Professor e aluno atribuem sentidos às suas ações.
+            </p>
+        </div>
+
+        <div class="school-card">
+            <div class="icon">🤝</div>
+            <h3>Relações sociais</h3>
+            <p>
+                A escola é formada por diferentes relações.
+            </p>
+        </div>
+
+        <div class="school-card">
+            <div class="icon">🏫</div>
+            <h3>Burocracia</h3>
+            <p>
+                Regras, cargos, hierarquia e procedimentos.
+            </p>
+        </div>
+
+        <div class="school-card">
+            <div class="icon">📊</div>
+            <h3>Racionalização</h3>
+            <p>
+                Avaliações, currículos, horários e documentos.
+            </p>
+        </div>
+
+        <div class="school-card">
+            <div class="icon">🌎</div>
+            <h3>Socialização</h3>
+            <p>
+                A educação prepara o indivíduo para participar
+                da sociedade.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- TRANSIÇÃO -->
+
+<section class="final" id="desafio">
+
+    <div class="eyebrow">04 — Hora de colocar Weber em prática</div>
+
+    <h2>VOCÊ PENSA<br>COMO WEBER?</h2>
+
+    <p>
+        Chegou a hora de testar se você consegue identificar
+        os conceitos de Weber em situações do cotidiano.
+    </p>
+
+    <a
+        class="cta"
+        href="https://dxdxmxchxdx.github.io/Dinamica-weber-fixacao/dinamica_isso_e_weber.html"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        🎮 INICIAR DESAFIO
+    </a>
+
+</section>
+
+
+<footer>
+    MAX WEBER — Seminário de Sociologia
+</footer>
+
+
 <script>
-const qs=[
-["Um estudante participa de uma atividade porque quer compreender o conteúdo e melhorar sua nota.","Ação social",["Ação social","Burocracia","Tipo ideal","Não se encaixa"]],
-["Professor e estudantes realizam uma atividade em conjunto, orientando suas ações uns pelos outros.","Relação social",["Relação social","Racionalização","Tipo ideal","Não se encaixa"]],
-["Para realizar a matrícula, o estudante precisa entregar documentos, cumprir prazos e seguir procedimentos definidos pela instituição.","Burocracia",["Ação social","Burocracia","Relação social","Tipo ideal"]],
-["A escola organiza horários, calendário, avaliações, frequência, registros e procedimentos para tornar seu funcionamento previsível.","Racionalização",["Racionalização","Ação social","Relação social","Não se encaixa"]],
-["Um pesquisador cria um modelo teórico de uma escola totalmente organizada segundo regras burocráticas e usa esse modelo para comparar instituições reais.","Tipo ideal",["Tipo ideal","Burocracia","Ação social","Relação social"]],
-["Durante a aula, um estudante espirra involuntariamente, sem significado social orientado pela ação de outras pessoas.","Não se encaixa",["Ação social","Relação social","Burocracia","Não se encaixa"]]
-];
-let i=0,score=0,done=false;
-const game=document.getElementById("game"),fb=document.getElementById("feedback"),next=document.getElementById("next"),restart=document.getElementById("restart"),sc=document.getElementById("score");
-function show(){done=false;fb.textContent="";next.classList.add("hidden");restart.classList.add("hidden");
-let [q,c,o]=qs[i];game.innerHTML='<div class="q">'+(i+1)+". "+q+'</div><div class="answers">'+o.map(x=>'<button>'+x+'</button>').join("")+'</div>';
-game.querySelectorAll("button").forEach(b=>b.onclick=()=>answer(b,c));}
-function answer(b,c){if(done)return;done=true;game.querySelectorAll("button").forEach(x=>x.disabled=true);
-if(b.textContent===c){score++;b.classList.add("correct");fb.textContent="✅ Acertou! "+c+"."}
-else{b.classList.add("wrong");fb.textContent="❌ A resposta esperada é: "+c+".";[...game.querySelectorAll("button")].find(x=>x.textContent===c).classList.add("correct")}
-sc.textContent="Pontuação: "+score+" / "+qs.length;if(i<qs.length-1)next.classList.remove("hidden");else{fb.textContent+=" 🎉 Fim da dinâmica!";restart.classList.remove("hidden")}}
-next.onclick=()=>{i++;show()};restart.onclick=()=>{i=0;score=0;sc.textContent="Pontuação: 0";show()};show();
-</script></div></body></html>
+
+function toggleConcept(card) {
+    card.classList.toggle("active");
+}
+
+</script>
+
+</body>
+</html>
